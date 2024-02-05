@@ -1,23 +1,15 @@
-const { getAllUsersDTO, getUserByIdDTO } = require('../DTO/RequestDTO/user.dto');
+const {
+  getAllUsersDTO,
+  getUserByIdDTO,
+} = require("../DTO/RequestDTO/user.dto");
 
-const { Mapper } = require('../DTO/mapper');
+const { Mapper } = require("../DTO/mapper");
 
-const { userService } = require('../services/user.service');
+const { userService } = require("../services/user.service");
 
 class UserController {
-  /**
-   * @static
-   * @api { GET } mobile/tv/user/getAllUsers
-   * @description Get list of all users
-   * @param {import('express').Request} req  - express request object
-   * @param {import('express').Response} res - express response object
-   * @param {import('express').NextFunction} next - express next callback function
-   */
   static async getAllUsers(req, res, next) {
     try {
-      /**
-       * @type { DTO.Request.getAllUsersDTO }
-       */
       const RequestDTO = await Mapper.toDTO(getAllUsersDTO, req, {
         pagination: true,
       });
@@ -40,9 +32,6 @@ class UserController {
    */
   static async getUserById(req, res, next) {
     try {
-      /**
-       * @type { DTO.Request.getUserByIdDTO }
-       */
       const RequestDTO = await Mapper.toDTO(getUserByIdDTO, req, {
         pagination: false,
       });

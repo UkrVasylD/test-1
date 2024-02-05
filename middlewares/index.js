@@ -1,4 +1,4 @@
-const RESPONSES = require("../constants/responses");
+const RESPONSES = require("../constants");
 
 const { HttpException } = require("./../helpers/errors");
 
