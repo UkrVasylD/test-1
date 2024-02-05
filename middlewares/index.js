@@ -1,6 +1,6 @@
-const RESPONSES = require('../constants/responses');
+const RESPONSES = require("../constants/responses");
 
-const { HttpException, DomainException } = require('./../helpers/errors');
+const { HttpException } = require("./../helpers/errors");
 
 class MiddlewaresHandler {
   /**
@@ -17,15 +17,15 @@ class MiddlewaresHandler {
 
     res.status(404);
 
-    if (req.accepts('html')) {
+    if (req.accepts("html")) {
       return res.send(PAGE_NOT_FOUND);
     }
 
-    if (req.accepts('json')) {
+    if (req.accepts("json")) {
       return res.json({ error: PAGE_NOT_FOUND });
     }
 
-    res.type('txt');
+    res.type("txt");
 
     return res.json(PAGE_NOT_FOUND);
   }
@@ -40,12 +40,7 @@ class MiddlewaresHandler {
   static errorHandler(err, req, res, next) {
     const { statusCode = 500, message, cause, errorCode = null } = err;
 
-    // Handle custom domain exception, send provided message =======================
-    if (err instanceof DomainException) {
-      return res.status(err.statusCode).json(err);
-    }
-
-    err.path = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+    err.path = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
 
     // Handle custom exception, send provided message =======================
     if (err instanceof HttpException) {
@@ -63,14 +58,18 @@ class MiddlewaresHandler {
         console.error(err.cause ? cause : err);
 
         // @ts-ignore
-        return res.status(statusCode).send({ error: message, statusCode, errorCode });
+        return res
+          .status(statusCode)
+          .send({ error: message, statusCode, errorCode });
       }
 
       // remove stacktrace for warn
       console.error({ ...err, stack: undefined }, message);
 
       // @ts-ignore
-      return res.status(/* Hello Kisa */ 200).send({ error: message, statusCode, errorCode });
+      return res
+        .status(/* Hello Kisa */ 200)
+        .send({ error: message, statusCode, errorCode });
     }
 
     // Handle unexpected error ==============================================
@@ -79,7 +78,9 @@ class MiddlewaresHandler {
 
       /* Do not expose server-side error details for client */
       // @ts-ignore
-      return res.status(500).send({ error: 'Internal Server Error', statusCode: 500 });
+      return res
+        .status(500)
+        .send({ error: "Internal Server Error", statusCode: 500 });
     }
 
     // remove stacktrace for warn

@@ -1,9 +1,7 @@
-const { HttpException } = require('./http');
-const { UnhandledError } = require('./system');
-const DomainExceptions = require('./domains/');
+const { HttpException } = require("./http");
+const { UnhandledError } = require("./system");
 
 module.exports = {
-  ...DomainExceptions,
   HttpException,
   UnhandledError,
 };

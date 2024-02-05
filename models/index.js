@@ -1,9 +1,7 @@
-const { MODELS } = require('../constants');
+const { MODELS } = require("../constants");
 
 module.exports = {
-  [MODELS.USERS]: require('./user.model'),
-  [MODELS.LIKES]: require('./likes.model'),
-  [MODELS.VIEWS]: require('./views.model'),
-  [MODELS.ARTISTS]: require('./artist.model'),
-  [MODELS.CONTENTS]: require('./content.model'),
+  [MODELS.USERS]: require("./user.model"),
+  [MODELS.VIEWS]: require("./views.model"),
+  [MODELS.CONTENTS]: require("./content.model"),
 };
