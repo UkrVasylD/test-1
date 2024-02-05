@@ -10,7 +10,7 @@
       "name": "Launch Yrii",
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/test/app.js",
+      "program": "${workspaceFolder}/app.js",
       "runtimeExecutable": "/home/vasyl/.nvm/versions/node/v18.17.1/bin/node"
     }
   ]
