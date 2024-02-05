@@ -1,74 +1,42 @@
-const { HttpException } = require('../helpers/errors');
-const { requestHelper } = require('../helpers/request');
-const CONSTANTS = require('../constants/index');
+const { HttpException } = require("../helpers/errors");
 
 class Mapper {
-  /**
-   * @template DTO
-   * @param {import('joi').Schema & DTO } schema
-   * @param {import('express').Request} req
-   * @param {object} mutations
-   * @param {object} [mutations.remap] - { oldKey: newKey }
-   * @param {object} [mutations.override] - { key: value } to override
-   * @param {boolean} [mutations.pagination] - add pagination to DTO
-   *
-   */
-  async toDTO(schema, req, mutations = { remap: {}, override: {}, pagination: false }) {
+  async toDTO(schema, req, mutations = { pagination: false }) {
     if (!schema) {
-      throw new Error('Schema is invalid or not provided');
+      throw new Error("Schema is invalid or not provided");
     }
 
     try {
-      const { body, params, query, uId, uAgeParam, userAge, isTV, isMobile, files } = req;
-
-      CONSTANTS.RESERVED_PARAMS.forEach((item) => {
-        const mergedParams = { ...body, ...query };
-
-        if (Object.keys(mergedParams).includes(item)) {
-          const name = `target${item.charAt(0).toUpperCase()}${item.slice(1)}`;
-
-          body[name] = mergedParams[item];
-
-          query[item] ? delete query[item] : delete body[item];
-        }
-      });
+      const { body, params, query, uId } = req;
 
       let data = {
         ...body,
         ...params,
         ...query,
         userId: uId,
-        uAgeParam,
-        userAge,
-        isTV,
-        isMobile,
-        files,
       };
 
       if (mutations.pagination) {
-        data = { ...data, ...requestHelper.searchPagination(query, req.isTV) };
-      }
+        const { count } = query;
+        let { page, limit } = query;
 
-      if (mutations.remap) {
-        Object.keys(mutations.remap).forEach((key) => {
-          data[mutations.remap[key]] = data[key];
+        page = page && +page > 0 ? +page : 1;
 
-          schema.$_terms.keys.find(
-            (item) => item.key === mutations.remap[key]
-          ).schema._flags.label = key;
+        if (!limit) {
+          limit = count ? +count : null;
+        }
 
-          delete data[key];
-        });
-      }
+        limit = +limit > 0 ? Number(limit) : 15;
 
-      if (mutations.override) {
-        data = { ...data, ...mutations.override };
+        const skip = (+page - 1) * limit;
+
+        data = { ...data, skip, limit };
       }
 
       const DTO = await schema.validateAsync(data, {
         errors: {
           wrap: {
-            label: '',
+            label: "",
           },
         },
         convert: true,
@@ -77,7 +45,7 @@ class Mapper {
 
       return DTO;
     } catch (e) {
-      if (e?.message === 'marketplace-not-found') {
+      if (e?.message === "marketplace-not-found") {
         throw HttpException.NOT_FOUND();
       }
 

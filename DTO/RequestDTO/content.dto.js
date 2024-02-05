@@ -1,72 +1,94 @@
-const Joi = require('joi');
-const { REGULAR_EXPRESSIONS } = require('../../constants/regularExpressions');
-const { User, Pagination } = require('./index');
-const CONSTANTS = require('../../constants');
-const { ERRORS } = require('../error.constant');
+const Joi = require("joi");
+const { REGULAR_EXPRESSIONS } = require("../../constants/regularExpressions");
+const { ERRORS } = require("../error.constant");
 
-const { objectId } = require('../SharedDTO');
+const { objectId } = require("../SharedDTO");
 
-const homeContentDTO = User;
-
-const createContentDTO = User.keys({
+const createContentDTO = Joi.object().keys({
   title: Joi.string().required(),
+  userId: Joi.object().default(null),
   description: Joi.string().required(),
 });
 
-const getContentByIdDTO = User.keys({
-  id: objectId.required(),
-}).messages(ERRORS);
+const getContentByIdDTO = Joi.object()
+  .keys({
+    userId: Joi.object().default(null),
+    id: objectId.required(),
+  })
+  .messages(ERRORS);
 
-const getContentListDTO = Pagination.messages(ERRORS);
+const getContentListDTO = Joi.object()
+  .keys({
+    skip: Joi.number().default(0).required(),
+    limit: Joi.number().max(100).default(15).required(),
+    userId: Joi.object().default(null),
+  })
+  .messages(ERRORS);
 
-const updateContentDTO = User.keys({
-  id: objectId.required(),
-  title: Joi.string().required(),
-  description: Joi.string().required(),
-});
+const updateContentDTO = Joi.object()
+  .keys({
+    id: objectId.required(),
+    title: Joi.string().required(),
+    userId: Joi.object().default(null),
+    description: Joi.string().required(),
+  })
+  .messages(ERRORS);
 
-const watchContentDTO = User.keys({
+const watchContentDTO = Joi.object().keys({
   contentId: Joi.string()
     .regex(REGULAR_EXPRESSIONS.OBJECT_ID)
     .message(`Invalid content identifier has been provided.`)
     .required(),
+  userId: Joi.object().default(null),
   isPreview: Joi.boolean().default(false),
 });
 
-const watchContentIFrameDTO = User.keys({
+const watchContentIFrameDTO = Joi.object().keys({
   contentId: Joi.string()
     .regex(REGULAR_EXPRESSIONS.OBJECT_ID)
     .message(`Invalid content identifier has been provided.`)
     .required(),
+  userId: Joi.object().default(null),
 });
 
-const likeContentDTO = User.keys({
+const likeContentDTO = Joi.object().keys({
   contentId: Joi.string()
     .regex(REGULAR_EXPRESSIONS.OBJECT_ID)
     .message(`Invalid content identifier has been provided.`)
     .required(),
+  userId: Joi.object().default(null),
 });
 
-const dislikeContentDTO = User.keys({
+const dislikeContentDTO = Joi.object().keys({
   contentId: Joi.string()
     .regex(REGULAR_EXPRESSIONS.OBJECT_ID)
     .message(`Invalid content identifier has been provided.`)
     .required(),
+  userId: Joi.object().default(null),
 });
 
-const deleteContentDTO = User.keys({
-  id: objectId.required(),
-}).messages(ERRORS);
+const deleteContentDTO = Joi.object()
+  .keys({
+    id: objectId.required(),
+    userId: Joi.object().default(null),
+  })
+  .messages(ERRORS);
 
-const getAllPassedTestOfUserDTO = Pagination.keys({
+const getAllPassedTestOfUserDTO = Joi.object().keys({
   idUser: objectId.required(),
   sort: Joi.string(),
+  skip: Joi.number().default(0).required(),
+  userId: Joi.object().default(null),
+  limit: Joi.number().max(100).default(15).required(),
 });
 
-const assignContentToUserDTO = User.keys({
-  contentId: objectId.required(),
-  idUser: objectId.required(),
-}).messages(ERRORS);
+const assignContentToUserDTO = Joi.object()
+  .keys({
+    contentId: objectId.required(),
+    idUser: objectId.required(),
+    userId: Joi.object().default(null),
+  })
+  .messages(ERRORS);
 
 module.exports = {
   createContentDTO,
@@ -74,7 +96,6 @@ module.exports = {
   getContentListDTO,
   updateContentDTO,
   deleteContentDTO,
-  homeContentDTO,
   watchContentDTO,
   getAllPassedTestOfUserDTO,
   watchContentIFrameDTO,

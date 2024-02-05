@@ -1,14 +1,14 @@
-const jwt = require('jsonwebtoken');
-const { customAlphabet } = require('nanoid');
+const jwt = require("jsonwebtoken");
+const { customAlphabet } = require("nanoid");
 
-const CONSTANTS = require('../constants/index');
-const { REGULAR_EXPRESSIONS } = require('../constants/regularExpressions');
-const { ERROR_CODES } = require('../constants/errorCodes');
-const { HttpException } = require('./errors');
+const CONSTANTS = require("../constants/index");
+const { REGULAR_EXPRESSIONS } = require("../constants/regularExpressions");
+const { ERROR_CODES } = require("../constants/errorCodes");
+const { HttpException } = require("./errors");
 
-const { redisAdapter } = require('../adapters/redis');
-const { config } = require('../config');
-const { userProvider } = require('../providers/user.provider');
+const { redisAdapter } = require("../adapters/redis");
+const { config } = require("../config");
+const { userProvider } = require("../providers/user.provider");
 
 class AuthHelper {
   constructor() {
@@ -53,14 +53,19 @@ class AuthHelper {
     }
 
     if (!REGULAR_EXPRESSIONS.OBJECT_ID.test(data._id)) {
-      throw HttpException.BAD_REQUEST(`Invalid user identifier has been provided.`);
+      throw HttpException.BAD_REQUEST(
+        `Invalid user identifier has been provided.`
+      );
     }
 
     const session = await redisAdapter.getValue(`${data._id}access`);
 
     // CHECK IF USER AUTH EXIST IN CACHE
     if (!session) {
-      throw HttpException.UNAUTHORIZED(null, ERROR_CODES[401].USER_NOT_AUTHORIZED);
+      throw HttpException.UNAUTHORIZED(
+        null,
+        ERROR_CODES[401].USER_NOT_AUTHORIZED
+      );
     }
 
     return data;
@@ -81,7 +86,9 @@ class AuthHelper {
       throw HttpException.UNAUTHORIZED();
     }
 
-    const authData = await redisAdapter.getValue(`${data.userId.toString()}refresh`);
+    const authData = await redisAdapter.getValue(
+      `${data.userId.toString()}refresh`
+    );
 
     if (!authData) {
       throw HttpException.UNAUTHORIZED();
@@ -89,10 +96,13 @@ class AuthHelper {
 
     await redisAdapter.delKeys(`${data.userId.toString()}refresh`);
 
-    const user = await userProvider.getSingle({ _id: data.userId }, { role: 1 });
+    const user = await userProvider.getSingle(
+      { _id: data.userId },
+      { role: 1 }
+    );
 
     if (!user) {
-      throw HttpException.NOT_FOUND('User is not found or has been removed');
+      throw HttpException.NOT_FOUND("User is not found or has been removed");
     }
 
     const sid = customAlphabet(CONSTANTS.ID_PATTERN, 12)();
@@ -121,7 +131,7 @@ class AuthHelper {
 
     const token = await jwt.sign(payload, this.secret);
 
-    await redisAdapter.setValue(`${payload._id}access`, token);
+    await redisAdapter.setValueEx(`${payload._id}access`, token, exp);
 
     return token;
   }
@@ -133,10 +143,17 @@ class AuthHelper {
    * @param {ObjectId} params.userId
    * @returns {Promise<string>}
    */
-  async _createRefreshToken({ userId, sid }, exp = CONSTANTS.REFRESH_TOKEN_DURATION) {
+  async _createRefreshToken(
+    { userId, sid },
+    exp = CONSTANTS.REFRESH_TOKEN_DURATION
+  ) {
     const refreshToken = jwt.sign({ userId, exp, sid }, this.secret);
 
-    await redisAdapter.setValue(`${userId.toString()}refresh`, refreshToken);
+    await redisAdapter.setValueEx(
+      `${userId.toString()}refresh`,
+      refreshToken,
+      exp
+    );
 
     return refreshToken;
   }

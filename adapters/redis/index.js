@@ -1,18 +1,23 @@
-const { createClient } = require('redis');
+const { createClient } = require("redis");
 
 const client = createClient();
 
 class RedisAdapter {
   async connect() {
-    client.on('error', (err) => console.log('Redis Client Error', err));
+    client.on("error", (err) => console.log("Redis Client Error", err));
 
     await client.connect();
 
-    console.log('redis connected');
+    console.log("redis connected");
   }
 
   async setValue(key, value) {
-    return await client.set(key, value);
+    await client.set(key, value);
+  }
+
+  async setValueEx(key, value, exp) {
+    const result = await client.set(key, value, "EX", exp);
+    return result;
   }
 
   async getValue(key) {
@@ -23,7 +28,7 @@ class RedisAdapter {
 
   async delKeys(key) {
     await client.del(key, function (err, reply) {
-      console.log('Redis Del', reply);
+      console.log("Redis Del", reply);
     });
   }
 }

@@ -1,7 +1,7 @@
-const { Provider } = require('./super');
-const { MODELS } = require('../constants');
+const { Provider } = require("./super");
+const { MODELS } = require("../constants");
 
-const CONSTANTS = require('../constants');
+const CONSTANTS = require("../constants");
 
 class UserProvider extends Provider {
   constructor() {
@@ -42,7 +42,10 @@ class UserProvider extends Provider {
       },
     ];
 
-    const [data, total] = await Promise.all([this.aggregation(pipeline), this.count($match)]);
+    const [data, total] = await Promise.all([
+      this.aggregation(pipeline),
+      this.count($match),
+    ]);
 
     return { data, total };
   }
@@ -60,10 +63,17 @@ class UserProvider extends Provider {
     const match = {
       ...{
         mobile: {
-          $or: [{ source: CONSTANTS.SOURCES_TYPE.ANDROID }, { source: CONSTANTS.SOURCES_TYPE.IOS }],
+          $or: [
+            { source: CONSTANTS.SOURCES_TYPE.ANDROID },
+            { source: CONSTANTS.SOURCES_TYPE.IOS },
+          ],
         },
         noSource: {
-          $or: [{ source: null }, { source: '' }, { source: { $exists: false } }],
+          $or: [
+            { source: null },
+            { source: "" },
+            { source: { $exists: false } },
+          ],
         },
         [CONSTANTS.SOURCES_TYPE.CEEK]: { source },
         [CONSTANTS.SOURCES_TYPE.LAND]: { source },
@@ -117,10 +127,10 @@ class UserProvider extends Provider {
               $arrayElemAt: [
                 {
                   $filter: {
-                    input: '$direct_message_rooms',
-                    as: 'item',
+                    input: "$direct_message_rooms",
+                    as: "item",
                     cond: {
-                      $eq: ['$$item.user', this.ObjectId(directMessageUser)],
+                      $eq: ["$$item.user", this.ObjectId(directMessageUser)],
                     },
                   },
                 },
@@ -131,7 +141,7 @@ class UserProvider extends Provider {
         },
         {
           $project: {
-            direct_message_room: '$direct_message_rooms.room',
+            direct_message_room: "$direct_message_rooms.room",
           },
         },
       ],
@@ -155,8 +165,8 @@ class UserProvider extends Provider {
       {
         $lookup: {
           from: CONSTANTS.MODELS.SUBSCRIPTIONS,
-          localField: '_id',
-          foreignField: 'user',
+          localField: "_id",
+          foreignField: "user",
           pipeline: [
             {
               $match: {
@@ -172,21 +182,21 @@ class UserProvider extends Provider {
               },
             },
           ],
-          as: 'subscriptionData',
+          as: "subscriptionData",
         },
       },
       {
         $addFields: {
           subscription: {
-            $first: '$subscriptionData',
+            $first: "$subscriptionData",
           },
         },
       },
       {
         $lookup: {
           from: CONSTANTS.MODELS.SUBSCRIPTION_TYPES,
-          localField: 'subscription.subscriptionType',
-          foreignField: '_id',
+          localField: "subscription.subscriptionType",
+          foreignField: "_id",
           pipeline: [
             {
               $project: {
@@ -195,14 +205,14 @@ class UserProvider extends Provider {
               },
             },
           ],
-          as: 'subscriptionType',
+          as: "subscriptionType",
         },
       },
       {
         $lookup: {
           from: MODELS.ROOMS,
-          localField: '_id',
-          foreignField: 'bannedUsers._id',
+          localField: "_id",
+          foreignField: "bannedUsers._id",
           pipeline: [
             {
               $project: {
@@ -210,15 +220,17 @@ class UserProvider extends Provider {
               },
             },
           ],
-          as: 'rooms',
+          as: "rooms",
         },
       },
       {
         $addFields: {
           subscriptionType: {
-            $first: '$subscriptionType',
+            $first: "$subscriptionType",
           },
-          kickedFromRooms: { $map: { input: '$rooms', as: 'room', in: '$$room._id' } },
+          kickedFromRooms: {
+            $map: { input: "$rooms", as: "room", in: "$$room._id" },
+          },
         },
       },
       {
@@ -231,34 +243,38 @@ class UserProvider extends Provider {
           avatarColor: 1,
           role: 1,
           isConfirm: {
-            $in: ['$accessToken', [null, '']],
+            $in: ["$accessToken", [null, ""]],
           },
           email: 1,
           userName: 1,
           gender: 1,
-          htcViveUserId: { $ifNull: ['$htcViveUserId', 'Unspecified'] },
-          oculusId: { $ifNull: ['$oculusId', 'Unspecified'] },
+          htcViveUserId: { $ifNull: ["$htcViveUserId", "Unspecified"] },
+          oculusId: { $ifNull: ["$oculusId", "Unspecified"] },
           createdAt: 1,
           subscribe: {
-            $ne: ['$subscriptionData', []],
+            $ne: ["$subscriptionData", []],
           },
           subscriptionType: {
-            $cond: ['$subscriptionType', '$subscriptionType.title', 'Not subscribed'],
+            $cond: [
+              "$subscriptionType",
+              "$subscriptionType.title",
+              "Not subscribed",
+            ],
           },
           subscriptionDateEnd: {
-            $cond: ['$subscription', '$subscription.dateEnd', 'Not subscribed'],
+            $cond: ["$subscription", "$subscription.dateEnd", "Not subscribed"],
           },
           isActiveAccount: 1,
           isBlocked: 1,
           isKYCPassed: {
-            $cond: ['$KYCVerification', true, false],
+            $cond: ["$KYCVerification", true, false],
           },
           birthDate: 1,
           BSCTokens: 1,
           balanceBNB: 1,
           BSCWalletAddress: 1,
           marketAddress: 1,
-          dateOfBirth: '$birthDate',
+          dateOfBirth: "$birthDate",
           hair: 1,
           eyes: 1,
           color: 1,
@@ -289,8 +305,8 @@ class UserProvider extends Provider {
       {
         $lookup: {
           from: CONSTANTS.MODELS.SUBSCRIPTIONS,
-          localField: '_id',
-          foreignField: 'user',
+          localField: "_id",
+          foreignField: "user",
           pipeline: [
             {
               $match: {
@@ -303,7 +319,7 @@ class UserProvider extends Provider {
               },
             },
           ],
-          as: 'subscribe',
+          as: "subscribe",
         },
       },
       {
@@ -317,10 +333,10 @@ class UserProvider extends Provider {
           avatarColor: 1,
           createdAt: 1,
           subscribe: {
-            $ne: ['$subscribe', []],
+            $ne: ["$subscribe", []],
           },
           isConfirm: {
-            $in: ['$accessToken', [null, '']],
+            $in: ["$accessToken", [null, ""]],
           },
           isActiveAccount: 1,
           usedITunesGift: 1,
@@ -360,6 +376,30 @@ class UserProvider extends Provider {
     });
 
     return status;
+  }
+
+  async getUserForLogin({ email, userName }) {
+    const userNameSearch = userName ? userName.toLowerCase() : null;
+
+    const match = { isDeleted: false };
+
+    match.$or = [
+      { email: email?.toLowerCase() || null },
+      { userNameSearch },
+      { userName },
+    ];
+
+    const projection = {
+      userName: 1,
+      email: 1,
+      hash: 1,
+      salt: 1,
+      role: 1,
+    };
+
+    const user = await this.getSingle(match, projection);
+
+    return user;
   }
 }
 
