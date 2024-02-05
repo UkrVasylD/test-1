@@ -3,7 +3,7 @@ const express = require("express");
 const compression = require("compression");
 const bodyParser = require("body-parser");
 const swaggerUI = require("swagger-ui-express");
-const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerJsDoc = require("swagger-jsdoc");
 
 const { mongoAdapter } = require("./adapters/mongo");
 const { redisAdapter } = require("./adapters/redis");
@@ -18,9 +18,9 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Your API",
+      title: "Library API",
       version: "1.0.0",
-      description: "Siple test API ",
+      description: "A simple Express Library API",
     },
     servers: [
       {
@@ -28,10 +28,10 @@ const options = {
       },
     ],
   },
-  apis: ["./route/*.js"],
+  apis: ["./routes/*.js"],
 };
 
-const specs = swaggerJsdoc(options);
+const specs = swaggerJsDoc(options);
 
 const app = express();
 
