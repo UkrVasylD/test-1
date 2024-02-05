@@ -1,13 +1,13 @@
-const express = require('express');
+const express = require("express");
 
-const { AccountController } = require('../../../controllers/auth');
+const { AccountController } = require("../../controllers/auth");
 
 const router = express.Router();
 
-router.post('/sign-up/', AccountController.signUpHandler);
+router.post("/sign-up/", AccountController.signUpHandler);
 
 router.post(
-  '/sign-in/',
+  "/sign-in/",
   /* 2FA handling delegated to Service layer ("candidate" scope) */
   AccountController.signInHandler
 );
