@@ -1,6 +1,6 @@
-const { Provider } = require('./super');
+const { Provider } = require("./super");
 
-const { MODELS } = require('../constants');
+const { MODELS } = require("../constants");
 
 class ContentProvider extends Provider {
   constructor() {
@@ -49,7 +49,12 @@ class ContentProvider extends Provider {
     return true;
   }
 
-  async getAllPassedTestOfUser({ completed, skip, limit, sort = { title: 1 } }) {
+  async getAllPassedTestOfUser({
+    completed,
+    skip,
+    limit,
+    sort = { title: 1 },
+  }) {
     const $match = {
       _id: { $in: completed },
     };
@@ -71,26 +76,20 @@ class ContentProvider extends Provider {
         {
           $lookup: {
             from: MODELS.VIEWS,
-            localField: '_id',
-            foreignField: 'entityId',
-            // let: { artistId: '$_id' },
+            localField: "_id",
+            foreignField: "entityId",
             pipeline: [
-              // {
-              //   $match: {
-              //     $expr: { $eq: ['$entityId', '$$artistId'] },
-              //   },
-              // },
               {
                 $project: { _id: 0, score: 1 },
               },
             ],
-            as: 'viewScore',
+            as: "viewScore",
           },
         },
         {
           $addFields: {
             score: {
-              $arrayElemAt: ['$viewScore.score', 0],
+              $arrayElemAt: ["$viewScore.score", 0],
             },
           },
         },

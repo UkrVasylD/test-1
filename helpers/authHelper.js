@@ -57,14 +57,6 @@ class AuthHelper {
     return data;
   }
 
-  /**
-   * Refresh user session
-   * @param {Object} oldRefreshToken
-   * @returns {Promise<{
-   * token: String
-   * refreshToken: String
-   * }>}
-   */
   async authorizeByRefreshToken(oldRefreshToken) {
     const data = this._verifyToken(oldRefreshToken);
 
@@ -105,13 +97,6 @@ class AuthHelper {
     return { token, refreshToken };
   }
 
-  /**
-   * Create access token for user session
-   * @private
-   * @param {Object} payload token payload
-   * @param {Number} exp token life time in milis
-   * @returns {Promise<String>}
-   */
   async _createAccessToken(payload = {}, exp = CONSTANTS.TOKEN_DURATION) {
     payload.exp = Math.round(Date.now() / 1000 + exp);
 
@@ -122,13 +107,6 @@ class AuthHelper {
     return token;
   }
 
-  /**
-   * Create refresh token for user session
-   * @private
-   * @param {Object} params
-   * @param {ObjectId} params.userId
-   * @returns {Promise<string>}
-   */
   async _createRefreshToken(
     { userId, sid },
     exp = CONSTANTS.REFRESH_TOKEN_DURATION
@@ -144,12 +122,6 @@ class AuthHelper {
     return refreshToken;
   }
 
-  /**
-   * Get data from token
-   * @private
-   * @param {String} token
-   * @returns {Object}
-   */
   _verifyToken(token) {
     try {
       // @ts-ignore

@@ -1,8 +1,6 @@
 const { Provider } = require("./super");
 const { MODELS } = require("../constants");
 
-const CONSTANTS = require("../constants");
-
 class UserProvider extends Provider {
   constructor() {
     super(MODELS.USERS);
@@ -62,44 +60,13 @@ class UserProvider extends Provider {
           _id: this.ObjectId(userId),
         },
       },
-      {
-        $lookup: {
-          from: CONSTANTS.MODELS.SUBSCRIPTIONS,
-          localField: "_id",
-          foreignField: "user",
-          pipeline: [
-            {
-              $match: {
-                contentType: CONSTANTS.SUBSCRIPTION_CONTENT_TYPE.SUBSCRIPTION,
-              },
-            },
-            {
-              $project: {
-                _id: 1,
-              },
-            },
-          ],
-          as: "subscribe",
-        },
-      },
+
       {
         $project: {
           email: 1,
           role: 1,
           userName: 1,
-          fullName: 1,
-          gender: 1,
-          avatar: 1,
-          avatarColor: 1,
           createdAt: 1,
-          subscribe: {
-            $ne: ["$subscribe", []],
-          },
-          isConfirm: {
-            $in: ["$accessToken", [null, ""]],
-          },
-          isActiveAccount: 1,
-          usedITunesGift: 1,
         },
       },
     ];

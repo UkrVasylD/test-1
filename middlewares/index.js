@@ -3,13 +3,6 @@ const RESPONSES = require("../constants");
 const { HttpException } = require("./../helpers/errors");
 
 class MiddlewaresHandler {
-  /**
-   * @static
-   * @description Middleware for not found routes
-   * @param {import('express').Request} req  - express request object
-   * @param {import('express').Response} res - express response object
-   */
-
   static notFound(req, res) {
     const { PAGE_NOT_FOUND } = RESPONSES;
 
@@ -30,12 +23,6 @@ class MiddlewaresHandler {
     return res.json(PAGE_NOT_FOUND);
   }
 
-  /**
-   * @static
-   * @description Middleware for handling and processing error responses
-   * @param {import('express').Request} req  - express request object
-   * @param {import('express').Response} res - express response object
-   */
   // eslint-disable-next-line no-unused-vars
   static errorHandler(err, req, res, next) {
     const { statusCode = 500, message, cause, errorCode = null } = err;
@@ -68,7 +55,7 @@ class MiddlewaresHandler {
 
       // @ts-ignore
       return res
-        .status(/* Hello Kisa */ 200)
+        .status(statusCode)
         .send({ error: message, statusCode, errorCode });
     }
 
@@ -83,11 +70,10 @@ class MiddlewaresHandler {
         .send({ error: "Internal Server Error", statusCode: 500 });
     }
 
-    // remove stacktrace for warn
     console.error({ ...err, stack: undefined }, message);
 
     // @ts-ignore
-    return res.status(/* Hello Kisa */ 200).send({ error: message });
+    return res.status(statusCode).send({ error: message });
   }
 }
 

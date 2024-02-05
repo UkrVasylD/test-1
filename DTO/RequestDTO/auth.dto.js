@@ -11,7 +11,6 @@ const signUpHandlerDTO = Joi.object()
       .regex(REGULAR_EXPRESSIONS.PASSWORD)
       .required(),
     userName: Joi.string().trim().min(6).required(),
-    userId: Joi.object().default(null),
   })
   .messages(ERRORS);
 
@@ -20,7 +19,6 @@ const signInHandlerDTO = Joi.object()
     password: Joi.string().required(),
     email: Joi.string(),
     userName: Joi.string(),
-    userId: Joi.object().default(null),
   })
   .or("email", "userName")
   .messages(ERRORS);

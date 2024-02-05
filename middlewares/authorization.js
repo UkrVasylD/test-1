@@ -1,34 +1,26 @@
-const { authHelper } = require('../helpers/authHelper');
+const { authHelper } = require("../helpers/authHelper");
 
-const { HttpException } = require('../helpers/errors');
-const { userProvider } = require('../providers/user.provider');
+const { HttpException } = require("../helpers/errors");
+const { userProvider } = require("../providers/user.provider");
 
 class Authorization {
-  /**
-   * @static
-   * @description Check user token. If data invalid, then reject request
-   * @param {import('express').Request} req  - express request object
-   * @param {import('express').Response} res - express response object
-   * @param {import('express').NextFunction} next - express next callback function
-   */
-
   static async requiredAuth(req, res, next) {
     const { headers } = req;
 
     try {
       const token = headers.Authorization || headers.authorization;
 
-      if (!token || !token.match('Bearer')) {
+      if (!token || !token.match("Bearer")) {
         throw HttpException.UNAUTHORIZED();
       }
 
-      const user = await authHelper.validateToken(token.split(' ')[1]);
+      const user = await authHelper.validateToken(token.split(" ")[1]);
 
       req.uId = userProvider.ObjectId(user._id);
 
       req.role = user.role;
 
-      req.token = token.split(' ')[1];
+      req.token = token.split(" ")[1];
 
       req.sid = user.sid;
 
@@ -38,14 +30,6 @@ class Authorization {
     }
   }
 
-  /**
-   * @static
-   * @description Refersh auth tokens
-   * @param {import('express').Request} req  - express request object
-   * @param {import('express').Response} res - express response object
-   * @param {import('express').NextFunction} next - express next callback function
-   */
-
   static async refreshToken(req, res, next) {
     try {
       const { query, headers } = req;
@@ -54,11 +38,14 @@ class Authorization {
         headers.RefreshToken ||
         headers.refreshToken ||
         headers.refreshtoken ||
-        headers['refresh-token'];
+        headers["refresh-token"];
 
       if (!refreshToken) {
         refreshToken =
-          query.RefreshToken || query.refreshToken || query.refreshtoken || query['refresh-token'];
+          query.RefreshToken ||
+          query.refreshToken ||
+          query.refreshtoken ||
+          query["refresh-token"];
       }
 
       if (!refreshToken) {
