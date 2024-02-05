@@ -12,6 +12,18 @@
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/app.js",
       "runtimeExecutable": "/home/vasyl/.nvm/versions/node/v18.17.1/bin/node"
+    },
+    {
+      "name": "Jest Tests file",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
+      "args": ["${relativeFile}"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "cwd": "${workspaceFolder}",
+      "protocol": "inspector",
+      "runtimeExecutable": "/home/vasyl/.nvm/versions/node/v16.16.0/bin/node"
     }
   ]
 }

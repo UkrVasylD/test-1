@@ -15,7 +15,7 @@ module.exports = {
     VIEWS: "Views",
   },
   PAGE_NOT_FOUND: "Page Not Found",
-
+  ID_PATTERN: "123456789abcdefghijklmnopqrstuvwxyz",
   REFRESH_TOKEN_DURATION: 60 * 60 * 24 * 7, // one week
   TOKEN_DURATION: 60 * 60 * 24, // one day
   ADMIN_INVITATION_DURATION: 60 * 60, // one hour

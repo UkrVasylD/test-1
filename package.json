@@ -10,9 +10,6 @@
   },
   "scripts": {
     "test": "jest",
-    "test:unit": "jest --selectProjects unit",
-    "test:integration": "jest --selectProjects integration",
-    "test:component": "jest --selectProjects component",
     "eslint": "node_modules/.bin/eslint ./"
   },
   "dependencies": {

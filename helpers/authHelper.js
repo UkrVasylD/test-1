@@ -15,15 +15,6 @@ class AuthHelper {
     this.secret = config.JWT_SECRET;
   }
 
-  /**
-   * Create auth session
-   * @param {Object} payload token paylaod
-   * @param {Boolean} remember do need create refresh token?
-   * @returns {Promise<{
-   * token: String
-   * refreshToken: String
-   * }>}
-   */
   async authorize(payload, remember = true) {
     const sid = customAlphabet(CONSTANTS.ID_PATTERN, 12)();
 
@@ -40,11 +31,6 @@ class AuthHelper {
     return { token, refreshToken };
   }
 
-  /**
-   * Validate jwt token and get decoded data
-   * @param {String} token
-   * @returns {Promise<object>}
-   */
   async validateToken(token) {
     const data = this._verifyToken(token);
 
@@ -177,10 +163,3 @@ class AuthHelper {
 }
 
 module.exports = { authHelper: new AuthHelper() };
-
-// ===========================================================================
-// Type definitions
-// ===========================================================================
-/**
- * @typedef {import('../providers/super').ObjectId} ObjectId
- */
